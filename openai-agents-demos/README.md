@@ -34,8 +34,8 @@ TEMPORAL_TASK_QUEUE='research-queue'
 3. Set your OpenAI API key:
    ```bash
    Add OpenAI API key file in the .env
-   ```
    OPENAI_API_KEY=''
+   ```
 
 ### PDF Generation (optional)
 
