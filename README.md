@@ -132,8 +132,9 @@ source .venv/bin/activate
 ```
 
 ```bash
-streamlit run ui/streamlit_app.py
+uv run streamlit run ui/streamlit_app.py
 ```
+
 This will launch the Interactive Research App on http://localhost:8501
 
 ![UI Interface](ui/ui_img.png "UI Interface Img")
