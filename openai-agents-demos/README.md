@@ -32,15 +32,18 @@ TEMPORAL_TASK_QUEUE='research-queue'
    ```bash
    uv sync
    ```
-3. Set your [OpenAI API](https://platform.openai.com/api-keys) key:
+   Note: If uv is not installed, please install uv by following the instructions [here](https://docs.astral.sh/uv/getting-started/installation/)
+
+   On MacOS you can install uv via pip or homebrew
+    ```bash
+   brew install uv
+   ```
+   
+4. Set your [OpenAI API](https://platform.openai.com/api-keys) key:
    ```bash
    # Add OpenAI API key in .env File
    OPENAI_API_KEY=''
    ```
-4. Install [Streamlit](https://docs.streamlit.io/get-started/installation):
-    ```
-    pip install streamlit
-    ```
 
 ### PDF Generation (optional)
 
@@ -87,6 +90,10 @@ sudo dnf install python-pip pango
 In one terminal, start the worker that will handle all workflows:
 
 ```bash
+source .venv/bin/activate
+```
+
+```bash
 uv run openai_agents/run_worker.py
 ```
 
@@ -118,6 +125,11 @@ This example is designed to be similar to the OpenAI Cookbook: [Introduction to 
 - **PDF Generator Agent**: Converts markdown reports to professionally formatted PDFs
 
 **To run:**
+
+```bash
+source .venv/bin/activate
+```
+
 ```bash
 streamlit run ui/streamlit_app.py
 ```
