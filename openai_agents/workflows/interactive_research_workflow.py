@@ -65,6 +65,7 @@ class InteractiveResearchResult:
     short_summary: str
     markdown_report: str
     follow_up_questions: list[str]
+    image_file_path: str | None = None
 
 
 @workflow.defn
@@ -86,12 +87,14 @@ class InteractiveResearchWorkflow:
         summary: str,
         report: str,
         questions: list[str] | None = None,
+        image_path: str | None = None,
     ) -> InteractiveResearchResult:
         """Helper to build InteractiveResearchResult"""
         return InteractiveResearchResult(
             short_summary=summary,
             markdown_report=report,
             follow_up_questions=questions or [],
+            image_file_path=image_path,
         )
 
     @workflow.run
@@ -112,6 +115,7 @@ class InteractiveResearchWorkflow:
                 report_data.short_summary,
                 report_data.markdown_report,
                 report_data.follow_up_questions,
+                self.research_manager.research_image_path,
             )
 
         # Main workflow loop - wait for research to be started and completed
@@ -137,6 +141,7 @@ class InteractiveResearchWorkflow:
                     self.report_data.short_summary,
                     self.report_data.markdown_report,
                     self.report_data.follow_up_questions,
+                    self.research_manager.research_image_path,
                 )
 
             # If research is initialized but not completed, handle the clarification flow
