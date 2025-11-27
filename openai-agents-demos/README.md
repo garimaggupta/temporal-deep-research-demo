@@ -34,14 +34,14 @@ TEMPORAL_TASK_QUEUE='research-queue'
    ```
    Note: If uv is not installed, please install uv by following the instructions [here](https://docs.astral.sh/uv/getting-started/installation/)
 
-   On MacOS you can install uv via pip or homebrew
+   On MacOS you can install uv via Homebrew (as shown below)
     ```bash
    brew install uv
    ```
    
 4. Set your [OpenAI API](https://platform.openai.com/api-keys) key:
    ```bash
-   # Add OpenAI API key in .env File
+   # Add OpenAI API key in .env file
    OPENAI_API_KEY=''
    ```
 
