@@ -34,7 +34,7 @@ TEMPORAL_TASK_QUEUE='research-queue'
    ```
 3. Set your OpenAI API key:
    ```bash
-   Add OpenAI API key file in the .env
+   Add OpenAI API key in .env File
    OPENAI_API_KEY=''
    ```
 4. Install Streamlit:
