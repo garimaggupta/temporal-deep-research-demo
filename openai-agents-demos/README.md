@@ -23,6 +23,7 @@ TEMPORAL_API_KEY=''
 TEMPORAL_NAMESPACE=''
 TEMPORAL_ENDPOINT=''
 TEMPORAL_TASK_QUEUE='research-queue'
+```
 
 ## Setup
 
@@ -36,12 +37,10 @@ TEMPORAL_TASK_QUEUE='research-queue'
    Add OpenAI API key file in the .env
    OPENAI_API_KEY=''
    ```
-
-### Streamlit
-
-```
-pip install streamlit
-```
+4. Install Streamlit:
+    ```
+    pip install streamlit
+    ```
 
 ### PDF Generation (optional)
 
