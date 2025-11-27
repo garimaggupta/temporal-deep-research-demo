@@ -12,7 +12,6 @@ from temporalio import activity
 class ImageStylingOptions(BaseModel):
     """Styling options for image generation"""
 
-    quality: str = "low"  # low, medium, high, auto
     size: str = "1024x1024"  # 1024x1024, 1536x1024, 1024x1536, auto
     output_format: str = "png"  # png, jpeg, webp
     output_compression: Optional[int] = None  # 0-100 for JPEG/WEBP
@@ -51,13 +50,11 @@ async def generate_image(
         if styling_options is None:
             styling_options = ImageStylingOptions()
 
-        styling_options.quality = "low" # temp: low quality for testing
-
         # Generate image via OpenAI API
         result = client.images.generate(
             model="gpt-image-1",
             prompt=prompt,
-            quality=styling_options.quality,
+            quality="low", # hardcoded low quality for speed/efficiency
             size=styling_options.size,
             output_format=styling_options.output_format,
             **(
