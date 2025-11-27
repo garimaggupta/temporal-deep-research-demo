@@ -43,7 +43,7 @@ from streamlit_utils import FileManager, run_async
 # ---------------------------------------------------------------------------
 load_dotenv(dotenv_path=".env", override=True)
 
-TEMPORAL_ENDPOINT = os.getenv("TEMPORAL_ENDPOINT")
+TEMPORAL_ADDRESS = os.getenv("TEMPORAL_ADDRESS")
 TEMPORAL_NAMESPACE = os.getenv("TEMPORAL_NAMESPACE", "default")
 TEMPORAL_API_KEY = os.getenv("TEMPORAL_API_KEY")
 TEMPORAL_TASK_QUEUE = os.getenv("TEMPORAL_TASK_QUEUE", "research-queue")
@@ -124,15 +124,15 @@ async def get_temporal_client() -> Client:
     if st.session_state.temporal_client:
         return st.session_state.temporal_client
 
-    if not TEMPORAL_ENDPOINT:
+    if not TEMPORAL_ADDRESS:
         raise RuntimeError(
-            "TEMPORAL_ENDPOINT is missing. Set it in .env or the environment."
+            "TEMPORAL_ADDRESS is missing. Set it in .env or the environment."
         )
 
-    #print(f"Connecting to Temporal at {TEMPORAL_ENDPOINT} in namespace {TEMPORAL_NAMESPACE} with Task Queue {TEMPORAL_TASK_QUEUE}")
+    #print(f"Connecting to Temporal at {TEMPORAL_ADDRESS} in namespace {TEMPORAL_NAMESPACE} with Task Queue {TEMPORAL_TASK_QUEUE}")
     
     client = await Client.connect(
-        TEMPORAL_ENDPOINT,
+        TEMPORAL_ADDRESS,
         namespace=TEMPORAL_NAMESPACE,
         api_key=TEMPORAL_API_KEY,
         tls=TEMPORAL_TLS,
@@ -511,7 +511,7 @@ def main():
 
     with st.sidebar:
         st.header("Temporal connection")
-        st.markdown(f"- Endpoint: `{TEMPORAL_ENDPOINT or 'not set'}`")
+        st.markdown(f"- Endpoint: `{TEMPORAL_ADDRESS or 'not set'}`")
         st.markdown(f"- Namespace: `{TEMPORAL_NAMESPACE}`")
         st.markdown(f"- Task queue: `{TEMPORAL_TASK_QUEUE}`")
         render_history_panel()

@@ -21,7 +21,7 @@ Access original repo [here](https://github.com/steveandroulakis/openai-agents-de
 # Update Temporal Connection info in .env File
 TEMPORAL_API_KEY=''
 TEMPORAL_NAMESPACE=''
-TEMPORAL_ENDPOINT=''
+TEMPORAL_ADDRESS=''
 TEMPORAL_TASK_QUEUE='research-queue'
 ```
 

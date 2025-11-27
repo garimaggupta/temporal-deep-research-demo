@@ -27,11 +27,11 @@ from openai_agents.workflows.pdf_generation_activity import generate_pdf
 async def main():
     logging.basicConfig(level=logging.INFO)
     print("Starting worker...")
-    print(f"Connecting to Temporal at {os.getenv('TEMPORAL_ENDPOINT')} in namespace {os.getenv('TEMPORAL_NAMESPACE')}")
+    print(f"Connecting to Temporal at {os.getenv('TEMPORAL_ADDRESS')} in namespace {os.getenv('TEMPORAL_NAMESPACE')}")
 
     # Create client connected to server at the given address
     client = await Client.connect(
-        os.getenv('TEMPORAL_ENDPOINT'),
+        os.getenv('TEMPORAL_ADDRESS'),
         namespace= os.getenv('TEMPORAL_NAMESPACE'),
         api_key=os.getenv('TEMPORAL_API_KEY'),
         tls=True,
