@@ -27,10 +27,14 @@ from openai_agents.workflows.pdf_generation_activity import generate_pdf
 async def main():
     logging.basicConfig(level=logging.INFO)
     print("Starting worker...")
-    print(f"Connecting to Temporal at {os.getenv('TEMPORAL_ENDPOINT')} in namespace {os.getenv('TEMPORAL_NAMESPACE')}")
+    if os.getenv('CONNECT_CLOUD') == 'Y':
+        print(f"Connecting to Temporal at {os.getenv('TEMPORAL_ENDPOINT')} in namespace {os.getenv('TEMPORAL_NAMESPACE')}")
+    else:
+        print(f"Connecting to localhost:7233")
 
     # Create client connected to server at the given address
-    client = await Client.connect(
+    if os.getenv('CONNECT_CLOUD') == 'Y':
+        client = await Client.connect(
         os.getenv('TEMPORAL_ENDPOINT'),
         namespace= os.getenv('TEMPORAL_NAMESPACE'),
         api_key=os.getenv('TEMPORAL_API_KEY'),
@@ -50,7 +54,24 @@ async def main():
         ],
         data_converter=pydantic_data_converter,
     )
-
+    else:
+        client = await Client.connect(
+        "localhost:7233",
+        plugins=[
+            OpenAIAgentsPlugin(
+                model_params=ModelActivityParameters(
+                    start_to_close_timeout=timedelta(seconds=200),
+                    schedule_to_close_timeout=timedelta(seconds=500),
+                    retry_policy=RetryPolicy(
+                        backoff_coefficient=2.0,
+                        initial_interval=timedelta(seconds=1),
+                        maximum_interval=timedelta(seconds=5),
+                    ),
+                )
+            ),
+        ],
+        data_converter=pydantic_data_converter,
+    )
     print("Client created, creating worker...")
     worker = Worker(
         client,
