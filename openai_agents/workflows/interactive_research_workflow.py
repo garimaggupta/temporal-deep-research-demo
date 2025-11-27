@@ -46,11 +46,9 @@ async def process_clarification(input: ProcessClarificationInput) -> ProcessClar
     is_last_question = (input.current_question_index + 1) == input.total_questions
     if is_last_question:
         attempt = activity.info().attempt
-        cloud_providers = ["GCP", "Azure"]
         if attempt <= 3:
-            provider = cloud_providers[attempt - 1]
             await asyncio.sleep(5)
-            raise ApplicationError(f"{provider} has an outage 😊")
+            raise ApplicationError(f"LLM Agent API failure 😭")
     
     question_key = f"question_{input.current_question_index}"
     return ProcessClarificationResult(
