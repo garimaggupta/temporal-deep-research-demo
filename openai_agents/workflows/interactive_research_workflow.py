@@ -1,7 +1,10 @@
+import asyncio
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Any
 
-from temporalio import workflow
+from temporalio import activity, workflow
+from temporalio.exceptions import ApplicationError
 
 from openai_agents.workflows.research_agents.research_manager import (
     InteractiveResearchManager,
@@ -15,13 +18,53 @@ from openai_agents.workflows.research_agents.research_models import (
 
 
 @dataclass
+class ProcessClarificationInput:
+    """Input for clarification processing activity"""
+    answer: str
+    current_question_index: int
+    current_question: str | None
+    total_questions: int
+
+
+@dataclass
+class ProcessClarificationResult:
+    """Result from clarification processing activity"""
+    question_key: str
+    answer: str
+    new_index: int
+
+
+@activity.defn
+async def process_clarification(input: ProcessClarificationInput) -> ProcessClarificationResult:
+    """Process a single clarification answer"""
+    activity.logger.info(
+        f"Processing clarification answer {input.current_question_index + 1}/{input.total_questions}: "
+        f"'{input.answer}' for question: '{input.current_question}'"
+    )
+    
+    # Simulate cloud provider outages for the last question
+    is_last_question = (input.current_question_index + 1) == input.total_questions
+    if is_last_question:
+        attempt = activity.info().attempt
+        if attempt <= 3:
+            await asyncio.sleep(3)
+            raise ApplicationError(f"Network outage 😭")
+    
+    question_key = f"question_{input.current_question_index}"
+    return ProcessClarificationResult(
+        question_key=question_key,
+        answer=input.answer,
+        new_index=input.current_question_index + 1,
+    )
+
+
+@dataclass
 class InteractiveResearchResult:
-    """Result from interactive research workflow including both markdown and PDF"""
+    """Result from interactive research workflow including both markdown"""
 
     short_summary: str
     markdown_report: str
     follow_up_questions: list[str]
-    pdf_file_path: str | None = None
     image_file_path: str | None = None
 
 
@@ -44,7 +87,6 @@ class InteractiveResearchWorkflow:
         summary: str,
         report: str,
         questions: list[str] | None = None,
-        pdf_path: str | None = None,
         image_path: str | None = None,
     ) -> InteractiveResearchResult:
         """Helper to build InteractiveResearchResult"""
@@ -53,7 +95,6 @@ class InteractiveResearchWorkflow:
             short_summary=summary,
             markdown_report=report,
             follow_up_questions=questions or [],
-            pdf_file_path=pdf_path,
             image_file_path=image_path,
         )
 
@@ -71,14 +112,10 @@ class InteractiveResearchWorkflow:
         if initial_query and not use_clarifications:
             # Simple direct research mode - backward compatibility
             report_data = await self.research_manager._run_direct(initial_query)
-            pdf_file_path = await self.research_manager._generate_pdf_report(
-                report_data
-            )
             return self._build_result(
                 report_data.short_summary,
                 report_data.markdown_report,
                 report_data.follow_up_questions,
-                pdf_file_path,
                 self.research_manager.research_image_path,
             )
 
@@ -101,15 +138,10 @@ class InteractiveResearchWorkflow:
 
             # If research has been completed, return results
             if self.research_completed and self.report_data:
-                # Generate PDF if we have report data
-                pdf_file_path = await self.research_manager._generate_pdf_report(
-                    self.report_data
-                )
                 return self._build_result(
                     self.report_data.short_summary,
                     self.report_data.markdown_report,
                     self.report_data.follow_up_questions,
-                    pdf_file_path,
                     self.research_manager.research_image_path,
                 )
 
@@ -224,12 +256,22 @@ class InteractiveResearchWorkflow:
     ) -> ResearchInteractionDict:
         """Provide a single clarification response"""
         current_question = self._get_current_question()
-        workflow.logger.info(f"Received clarification answer {self.current_question_index + 1}/{len(self.clarification_questions)}: '{input.answer}' for question: '{current_question}'")
         
-        # Store answer with question index format for compatibility
-        question_key = f"question_{self.current_question_index}"
-        self.clarification_responses[question_key] = input.answer
-        self.current_question_index += 1
+        # Process clarification in activity
+        result = await workflow.execute_activity(
+            process_clarification,
+            ProcessClarificationInput(
+                answer=input.answer,
+                current_question_index=self.current_question_index,
+                current_question=current_question,
+                total_questions=len(self.clarification_questions),
+            ),
+            start_to_close_timeout=timedelta(seconds=30),
+        )
+        
+        # Apply result to workflow state
+        self.clarification_responses[result.question_key] = result.answer
+        self.current_question_index = result.new_index
 
         return self.get_status()
 
