@@ -4,32 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Success - Build Durable Agents</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="static/styles.css">
     <style>
         @font-face {
             font-family: 'Aeonik';
-            src: url('Aeonik-Light.otf') format('opentype');
+            src: url('static/Aeonik-Light.otf') format('opentype');
             font-weight: 300;
             font-style: normal;
         }
         
         @font-face {
             font-family: 'Aeonik';
-            src: url('Aeonik-Regular.otf') format('opentype');
+            src: url('static/Aeonik-Regular.otf') format('opentype');
             font-weight: 400;
             font-style: normal;
         }
         
         @font-face {
             font-family: 'Aeonik';
-            src: url('Aeonik-Medium.otf') format('opentype');
+            src: url('static/Aeonik-Medium.otf') format('opentype');
             font-weight: 500;
             font-style: normal;
         }
         
         @font-face {
             font-family: 'Aeonik';
-            src: url('Aeonik-Bold.otf') format('opentype');
+            src: url('static/Aeonik-Bold.otf') format('opentype');
             font-weight: 700;
             font-style: normal;
         }
@@ -66,6 +66,7 @@
             background-color: rgba(0, 0, 0, 0.2);
             padding: 0 24px;
             box-sizing: border-box;
+            overflow: scroll;
         }
 
         .temporal-logo {
@@ -264,7 +265,11 @@
         .placeholder-image {
             width: 100%;
             height: auto;
-            margin-bottom: 1rem;
+            margin: 1rem 0 1rem 0;
+        }
+
+        .placeholder-image img {
+            width: 100%;
         }
     </style>
 </head>
@@ -293,6 +298,10 @@
 
         <!-- Success Heading -->
         <h2 class="success-heading">Research Complete</h2>
+
+        <div class="placeholder-image">
+            <img class="report-image" alt="AI-Generated Research Visualization" src=""/>
+        </div>
 
         <!-- Buttons -->
         <div class="buttons-container">
@@ -390,13 +399,14 @@
         });
     </script>
 
-    <script src="api-client.js"></script>
+    <script src="static/api-client.js"></script>
     <script>
         // Accordion functionality
         const viewReportBtn = document.getElementById('viewReportBtn');
         const accordionContent = document.getElementById('accordionContent');
         const chevron = viewReportBtn.querySelector('.chevron');
         const markdownContent = document.querySelector('.markdown-content');
+        const reportImage = document.querySelector('.report-image');
 
         viewReportBtn.addEventListener('click', function() {
             accordionContent.classList.toggle('open');
@@ -404,13 +414,29 @@
         });
 
         // Load research result from sessionStorage
-        function loadResearchResult() {
-            const resultJson = sessionStorage.getItem('researchResult');
-            const workflowId = sessionStorage.getItem('workflowId');
-            
+        async function loadResearchResult() {
+            let workflowId = sessionStorage.getItem('workflowId');
+            let resultJson = sessionStorage.getItem('researchResult');
+
             if (!resultJson) {
-                console.log('No research result found');
-                return;
+                const params = new URLSearchParams(window.location.search);
+                workflowId = params.get("wf");
+
+                if (!workflowId) {
+                    console.log('No research result found');
+                    return;
+                }
+
+                const API_BASE_URL = 'http://localhost:8234';
+                const client = new ResearchClient(API_BASE_URL);
+
+                result = await client.getResult(workflowId);
+                resultJson = JSON.stringify(result)
+
+                if (!resultJson) {
+                    console.log('No research result found');
+                    return;
+                }
             }
 
             try {
@@ -419,6 +445,10 @@
                 // Display the markdown report
                 if (result.markdown_report) {
                     markdownContent.innerHTML = convertMarkdownToHTML(result.markdown_report);
+                }
+
+                if (result.image_file_path) {
+                    reportImage.src = result.image_file_path;
                 }
 
                 // Setup download button
