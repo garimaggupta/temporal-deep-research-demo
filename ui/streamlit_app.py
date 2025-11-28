@@ -47,7 +47,7 @@ TEMPORAL_ENDPOINT = os.getenv("TEMPORAL_ENDPOINT")
 TEMPORAL_NAMESPACE = os.getenv("TEMPORAL_NAMESPACE", "default")
 TEMPORAL_API_KEY = os.getenv("TEMPORAL_API_KEY")
 TEMPORAL_TASK_QUEUE = os.getenv("TEMPORAL_TASK_QUEUE", "research-queue")
-TEMPORAL_CONNECT_CLOUD = os.getenv("TEMPORAL_CONNECT_CLOUD", "N").lower() in {"1", "true", "yes"}
+TEMPORAL_CONNECT_CLOUD = os.getenv("CONNECT_CLOUD", "N")
 TEMPORAL_TLS = os.getenv("TEMPORAL_TLS", "true").lower() in {"1", "true", "yes"}
 DEFAULT_WORKFLOW_PREFIX = os.getenv(
     "STREAMLIT_WORKFLOW_PREFIX", "interactive-research"
@@ -130,7 +130,7 @@ async def get_temporal_client() -> Client:
             "TEMPORAL_ENDPOINT is missing. Set it in .env or the environment."
         )
 
-    if TEMPORAL_CONNECT_CLOUD:
+    if TEMPORAL_CONNECT_CLOUD == 'Y':
         client = await Client.connect(
             TEMPORAL_ENDPOINT,
             namespace=TEMPORAL_NAMESPACE,
