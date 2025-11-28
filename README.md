@@ -70,9 +70,23 @@ Keep this running throughout your demo sessions. The worker registers all availa
 You can run multiple copies of workers for faster workflow processing. Please ensure OPENAI_API_KEY is set before 
 you attempt to start the worker. 
 
+### Step 2: Run the Demo
+
+In another terminal:
+
+```bash
+source .venv/bin/activate
+```
+
+```bash
+streamlit run ui/streamlit_app.py
+```
+This will launch the Interactive Research App on http://localhost:8501
+
+![UI Interface](ui/ui_img.png "UI Interface Img")
 
 
-### Run the Demo: Multi-Agent Interactive Research Workflow
+### About the Demo: Multi-Agent Interactive Research Workflow
 
 An enhanced version of the research workflow with interactive clarifying questions to refine research parameters before execution and optional PDF generation.
 
@@ -93,21 +107,6 @@ This example is designed to be similar to the OpenAI Cookbook: [Introduction to 
 - **Search Agent**: Performs web searches
 - **Writer Agent**: Compiles final research reports
 - **PDF Generator Agent**: Converts markdown reports to professionally formatted PDFs
-
-**To run the demo:**
-In another terminal:
-
-```bash
-source .venv/bin/activate
-```
-
-```bash
-streamlit run ui/streamlit_app.py
-```
-This will launch the Interactive Research App on http://localhost:8501
-
-![UI Interface](ui/ui_img.png "UI Interface Img")
-
 
 **Output:**
 - `research_report.md` - Comprehensive markdown report
