@@ -51,47 +51,9 @@ TEMPORAL_TASK_QUEUE='research-queue'
    
 4. Set your [OpenAI API](https://platform.openai.com/api-keys) key:
    ```bash
-   # Add OpenAI API key in .env file
+   # Add OpenAI API key in .env file (copy .enn-sample to .env and update the OPENAI_API_KEY)
    OPENAI_API_KEY=''
    ```
-
-### PDF Generation (optional)
-
-
-For PDF generation functionality, you'll need WeasyPrint and its system dependencies:
-
-#### macOS (using Homebrew)
-```bash
-brew install weasyprint
-# OR install system dependencies for pip installation:
-brew install pango glib gtk+3 libffi
-```
-
-#### Linux (Ubuntu/Debian)
-```bash
-# For package installation:
-sudo apt install weasyprint
-
-# OR for pip installation:
-sudo apt install python3-pip libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0
-```
-
-#### Linux (Fedora)
-```bash
-# For package installation:
-sudo dnf install weasyprint
-
-# OR for pip installation:
-sudo dnf install python-pip pango
-```
-
-#### Windows
-1. Install Python from Microsoft Store
-2. Install MSYS2 from https://www.msys2.org/
-3. In MSYS2 shell: `pacman -S mingw-w64-x86_64-pango`
-4. Set environment variable: `WEASYPRINT_DLL_DIRECTORIES=C:\msys64\mingw64\bin`
-
-**Note:** PDF generation gracefully degrades when dependencies are unavailable - workflows will still generate markdown reports.
 
 ## Running the Demos
 
@@ -108,7 +70,8 @@ uv run openai_agents/run_worker.py
 ```
 
 Keep this running throughout your demo sessions. The worker registers all available workflows and activities.
-You can run multiple copies of workers for faster workflow processing
+You can run multiple copies of workers for faster workflow processing. Please ensure OPENAI_API_KEY is set before 
+you attempt to start the worker. 
 
 
 
