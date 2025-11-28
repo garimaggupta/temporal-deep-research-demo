@@ -10,29 +10,31 @@ Access original repo [here](https://github.com/steveandroulakis/openai-agents-de
 ## Prerequisites
 
 1. **Python 3.10+** - Required for the demos
-2. Temporal Server - Must be running locally on localhost:7233 OR Connect to [Temporal Cloud](https://temporal.io)
+2. ***Temporal Server*** - Must be running locally either from [Temporal Cloud](https://temporal.io) or locally at localhost:7233
 3. **OpenAI API Key** - Set as environment variable `OPENAI_API_KEY` in .env file (note, you will need enough quota on in your [OpenAI account](https://platform.openai.com/api-keys) to run this demo)
 4. **PDF Generation Dependencies** - Required for PDF output (optional)
 5. **Streamlit** for UI Interface
 
-### Run Temporal Server Locally
-```bash
-# Install Temporal CLI
-curl -sSf https://temporal.download/cli.sh | sh
+## Run Temporal Server
 
-# Start Temporal server
-temporal server start-dev
-```
-
-### Connect to Temporal Cloud
+### [Temporal Cloud](https://docs.temporal.io/develop/python/temporal-client#connect-to-temporal-cloud)
 
 ```bash
 # Update Temporal Connection info in .env File (copy .env-sample to .env)
 TEMPORAL_API_KEY=''
 TEMPORAL_NAMESPACE=''
 TEMPORAL_ENDPOINT=''
-CONNECT_CLOUD='N'
+CONNECT_CLOUD='Y'
 TEMPORAL_TASK_QUEUE='research-queue'
+```
+
+### Locally
+```bash
+# Install Temporal CLI
+curl -sSf https://temporal.download/cli.sh | sh
+
+# Start Temporal server
+temporal server start-dev
 ```
 
 ## Setup
@@ -44,11 +46,6 @@ TEMPORAL_TASK_QUEUE='research-queue'
    ```
    Note: If uv is not installed, please install uv by following the instructions [here](https://docs.astral.sh/uv/getting-started/installation/)
 
-   On MacOS you can install uv via Homebrew (as shown below)
-    ```bash
-   brew install uv
-   ```
-   
 4. Set your [OpenAI API](https://platform.openai.com/api-keys) key:
    ```bash
    # Add OpenAI API key in .env file (copy .enn-sample to .env and update the OPENAI_API_KEY)
@@ -73,9 +70,23 @@ Keep this running throughout your demo sessions. The worker registers all availa
 You can run multiple copies of workers for faster workflow processing. Please ensure OPENAI_API_KEY is set before 
 you attempt to start the worker. 
 
+### Step 2: Run the Demo
+
+In another terminal:
+
+```bash
+source .venv/bin/activate
+```
+
+```bash
+streamlit run ui/streamlit_app.py
+```
+This will launch the Interactive Research App on http://localhost:8501
+
+![UI Interface](ui/ui_img.png "UI Interface Img")
 
 
-### Run the Demo: Multi-Agent Interactive Research Workflow
+## About the Demo: Multi-Agent Interactive Research Workflow
 
 An enhanced version of the research workflow with interactive clarifying questions to refine research parameters before execution and optional PDF generation.
 
@@ -96,21 +107,6 @@ This example is designed to be similar to the OpenAI Cookbook: [Introduction to 
 - **Search Agent**: Performs web searches
 - **Writer Agent**: Compiles final research reports
 - **PDF Generator Agent**: Converts markdown reports to professionally formatted PDFs
-
-**To run the demo:**
-In another terminal:
-
-```bash
-source .venv/bin/activate
-```
-
-```bash
-streamlit run ui/streamlit_app.py
-```
-This will launch the Interactive Research App on http://localhost:8501
-
-![UI Interface](ui/ui_img.png "UI Interface Img")
-
 
 **Output:**
 - `research_report.md` - Comprehensive markdown report
