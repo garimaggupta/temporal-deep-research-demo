@@ -104,6 +104,11 @@ In another terminal:
 source .venv/bin/activate
 ```
 
+**To run the (incomplete) "new" UI:
+```bash
+python new-ui/backend/main.py
+```
+
 ```bash
 streamlit run ui/streamlit_app.py
 ```
